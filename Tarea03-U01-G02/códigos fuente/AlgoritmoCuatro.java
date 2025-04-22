@@ -6,20 +6,44 @@ public class AlgoritmoCuatro {
 
     private static String leerMensaje() {
         Scanner scanner = new Scanner(System.in);
-        System.out.print("Ingrese el mensaje a cifrar: ");
-        String sinEspacios = scanner.nextLine().toUpperCase().replaceAll("\\s+", "");
-
-        return sinEspacios;
+        String mensaje = "";
+        
+        while (true) {
+            System.out.print("Ingrese el mensaje a cifrar: ");
+            mensaje = scanner.nextLine().toUpperCase().replaceAll("\\s+", "");
+            
+            if (mensaje.isEmpty()) {
+                System.out.println("Error: No ha ingresado ningún mensaje. Por favor, intente nuevamente.");
+            } else {
+                break;
+            }
+        }
+        
+        return mensaje;
     }
 
     private static int leerDesplazamiento() {
         Scanner scanner = new Scanner(System.in);
-        System.out.print("Ingrese el desplazamiento: ");
-        return scanner.nextInt();
-    }
-
-    private static boolean esDesplazamientoValido(int desplazamiento) {
-        return desplazamiento >= 0 && desplazamiento < ALFABETO.length();
+        int desplazamiento = -1;
+        
+        while (true) {
+            System.out.print("Ingrese el desplazamiento (0-" + (ALFABETO.length() - 1) + "): ");
+            
+            try {
+                desplazamiento = scanner.nextInt();
+                
+                if (desplazamiento >= 0 && desplazamiento < ALFABETO.length()) {
+                    break;
+                } else {
+                    System.out.println("Error: El desplazamiento debe estar entre 0 y " + (ALFABETO.length() - 1) + ". Intente nuevamente.");
+                }
+            } catch (Exception e) {
+                System.out.println("Error: Debe ingresar un número entero válido. Intente nuevamente.");
+                scanner.next(); // Limpiar el buffer del scanner
+            }
+        }
+        
+        return desplazamiento;
     }
 
     private static String generarAlfabetoCifrado(int desplazamiento) {
@@ -35,8 +59,7 @@ public class AlgoritmoCuatro {
         return resultado.toString();
     }
 
-    private static void mostrarResultados(String mensaje, int desplazamiento, String alfabetoCifrado,
-            String mensajeCifrado) {
+    private static void mostrarResultados(String mensaje, int desplazamiento, String alfabetoCifrado, String mensajeCifrado) {
         System.out.println("\n=== RESULTADOS DEL CIFRADO ===");
         System.out.println("Alfabeto original : " + ALFABETO);
         System.out.println("Alfabeto cifrado  : " + alfabetoCifrado);
@@ -46,18 +69,14 @@ public class AlgoritmoCuatro {
     }
 
     public static void main(String[] args) {
+        System.out.println("=== CIFRADO CÉSAR ===");
+        
         String mensaje = leerMensaje();
         int desplazamiento = leerDesplazamiento();
-
-        if (!esDesplazamientoValido(desplazamiento)) {
-            System.out.println("Desplazamiento no válido. Debe estar entre 0 y " + (ALFABETO.length() - 1));
-            return;
-        }
 
         String alfabetoCifrado = generarAlfabetoCifrado(desplazamiento);
         String mensajeCifrado = cifrarMensaje(mensaje, alfabetoCifrado);
 
         mostrarResultados(mensaje, desplazamiento, alfabetoCifrado, mensajeCifrado);
     }
-
 }

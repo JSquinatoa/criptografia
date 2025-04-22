@@ -14,15 +14,24 @@ public class AlgoritmoSeis {
     };
     private static final String CARACTER_NO_ENCONTRADO = "**";
     private static final String MENSAJE_INSTRUCCION = "Ingrese el mensaje a cifrar: ";
+    private static final String MENSAJE_ADVERTENCIA = "¡Advertencia! No ha ingresado ningún mensaje. Por favor, intente nuevamente.";
 
     private static void ejecutarPrograma() {
         Scanner scanner = new Scanner(System.in);
-        System.out.print(MENSAJE_INSTRUCCION);
-        String mensaje = scanner.nextLine().toLowerCase();
+        String mensaje = "";
+        
+        // Validar que se ingrese un mensaje
+        while (mensaje.trim().isEmpty()) {
+            System.out.print(MENSAJE_INSTRUCCION);
+            mensaje = scanner.nextLine().toLowerCase();
+            
+            if (mensaje.trim().isEmpty()) {
+                System.out.println(MENSAJE_ADVERTENCIA);
+            }
+        }
 
         String mensajeCifrado = cifrarMensaje(mensaje);
         mostrarResultados(mensaje, mensajeCifrado);
-
     }
 
     private static String cifrarMensaje(String mensaje) {
@@ -52,12 +61,13 @@ public class AlgoritmoSeis {
 
     private static void mostrarResultados(String mensajeOriginal, String mensajeCifrado) {
         mostrarMatrizCifrado();
+        System.out.print("\n=== RESULTADOS DEL CIFRADO ===");
         System.out.println("\nMensaje original: " + mensajeOriginal);
         System.out.println("Mensaje cifrado: " + mensajeCifrado);
     }
 
     private static void mostrarMatrizCifrado() {
-        System.out.println("\nMatriz de cifrado:");
+        System.out.println("\n=== MATRIZ DE CIFRADO ===");
         for (char[] fila : MATRIZ_CIFRADO) {
             for (char caracter : fila) {
                 System.out.print(caracter + "\t");
@@ -74,3 +84,4 @@ public class AlgoritmoSeis {
         }
     }
 }
+

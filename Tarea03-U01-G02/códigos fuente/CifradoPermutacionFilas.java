@@ -1,34 +1,60 @@
-
 import java.util.Scanner;
 
 /**
  * Algoritmo de cifrado por permutación de filas (transposición simple).
  * Se toma como clave el número de filas (n) de una matriz cuadrada.
- * El mensaje (sin espacios) se coloca fila por fila en la matriz,
+ * El mensaje (puede contener espacios) se coloca fila por fila en la matriz,
  * y los espacios sobrantes se completan con '*'.
  * El mensaje cifrado se obtiene leyendo la matriz columna por columna.
  */
 public class CifradoPermutacionFilas {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
+        int n = 0;
 
-        // 1) Lectura de la clave (número de filas)
-        System.out.print("Ingrese el número de filas (clave): ");
-        int n = sc.nextInt();
-        sc.nextLine(); // Consumir salto de línea pendiente
+        // 1) Lectura de la clave (número de filas) con validación
+        while (true) {
+            System.out.print("Ingrese el número de filas (clave): ");
+            String linea = sc.nextLine();
+            if (linea.isEmpty()) {
+                System.out.println("Error: no ingresó ningún valor. Intente de nuevo.");
+                continue;
+            }
+            try {
+                n = Integer.parseInt(linea);
+                if (n <= 0) {
+                    System.out.println("Error: el número debe ser un entero positivo mayor que cero.");
+                } else {
+                    break;
+                }
+            } catch (NumberFormatException ex) {
+                System.out.println("Error: valor no es un número entero válido. Intente de nuevo.");
+            }
+        }
 
-        // 2) Lectura del mensaje original (puede contener espacios)
-        System.out.print("Ingrese el mensaje a cifrar: ");
-        String mensaje = sc.nextLine();
+        String mensaje;
+        String mensajeSinEspacios;
 
-        // 3) Eliminación de espacios para el proceso de cifrado
-        String mensajeSinEspacios = mensaje.replace(" ", "");
-
-        // 4) Validación: el texto (sin espacios) no debe exceder n * n
-        if (mensajeSinEspacios.length() > n * n) {
-            System.out.println("Error: el número de caracteres del mensaje (sin espacios) excede n x n.");
-            sc.close();
-            return;
+        // 2) Lectura del mensaje original con validación
+        while (true) {
+            System.out.print("Ingrese el mensaje a cifrar: ");
+            mensaje = sc.nextLine();
+            if (mensaje.isEmpty()) {
+                System.out.println("Error: mensaje vacío. Intente de nuevo.");
+                continue;
+            }
+            // 3) Eliminación de espacios para el proceso de cifrado
+            mensajeSinEspacios = mensaje.replace(" ", "");
+            // 4) Validación: el texto (sin espacios) no debe exceder n * n
+            if (mensajeSinEspacios.length() > n * n) {
+                System.out.printf(
+                    "Error: la longitud del mensaje sin espacios (%d) excede n x n (%d).\n",
+                    mensajeSinEspacios.length(), n * n
+                );
+                System.out.println("Intente con un mensaje más corto.");
+            } else {
+                break;
+            }
         }
 
         // 5) Creación de la matriz cuadrada de cifrado
@@ -37,10 +63,8 @@ public class CifradoPermutacionFilas {
         for (int fila = 0; fila < n; fila++) {
             for (int col = 0; col < n; col++) {
                 if (idx < mensajeSinEspacios.length()) {
-                    // Colocar siguiente carácter del mensaje
                     matriz[fila][col] = mensajeSinEspacios.charAt(idx++);
                 } else {
-                    // Completar con '*' si se acaban los caracteres del mensaje
                     matriz[fila][col] = '*';
                 }
             }

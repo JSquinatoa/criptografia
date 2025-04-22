@@ -2,78 +2,115 @@ import java.util.Scanner;
 
 public class Vigenere {
 
-    // Generea la key
+    static final int ALFABETO = 26;
+
+    // Genera la key con mismo largo que el texto
     static String generarKey(String str, String key) {
-        int x = str.length();
-
-        for (int i = 0;; i++) {
-            if (x == i)
-                i = 0;
-            if (key.length() == str.length())
-                break;
-            key += (key.charAt(i));
+        StringBuilder newKey = new StringBuilder(key);
+        while (newKey.length() < str.length()) {
+            newKey.append(key.charAt(newKey.length() % key.length()));
         }
-        return key;
+        return newKey.toString();
     }
 
-    // Texto cifrado
+    // Cifra el texto usando la clave
     static String textCifrado(String str, String key) {
-        String cifrado = "";
-
+        StringBuilder cifrado = new StringBuilder();
         for (int i = 0; i < str.length(); i++) {
-            // converting in range 0-25
-            int x = (str.charAt(i) + key.charAt(i)) % 26;
-
-            // convert into alphabets(ASCII)
+            int x = (str.charAt(i) + key.charAt(i)) % ALFABETO;
             x += 'A';
-
-            cifrado += (char) (x);
+            cifrado.append((char) x);
         }
-        return cifrado;
+        return cifrado.toString();
     }
 
-    // Texto desencriptado
+    // Descifra el texto cifrado con la clave
     static String textOriginal(String cifrado, String key) {
-        String original = "";
-
-        for (int i = 0; i < cifrado.length() &&
-                i < key.length(); i++) {
-            int x = (cifrado.charAt(i) -
-                    key.charAt(i) + 26) % 26;
-
+        StringBuilder original = new StringBuilder();
+        for (int i = 0; i < cifrado.length(); i++) {
+            int x = (cifrado.charAt(i) - key.charAt(i) + ALFABETO) % ALFABETO;
             x += 'A';
-            original += (char) (x);
+            original.append((char) x);
         }
-        return original;
+        return original.toString();
     }
 
-    // Minusculas a mayusculas
-    static String LowerToUpper(String s) {
-        StringBuffer str = new StringBuffer(s);
-        for (int i = 0; i < s.length(); i++) {
-            if (Character.isLowerCase(s.charAt(i))) {
-                str.setCharAt(i, Character.toUpperCase(s.charAt(i)));
-            }
-        }
-        s = str.toString();
-        return s;
+    // Convierte a mayúsculas
+    static String lowerToUpper(String s) {
+        return s.toUpperCase();
     }
+
+    // Valida el mensaje (solo letras, sin espacios)
+    static boolean mensajeValido(String mensaje) {
+        return mensaje.matches("[a-zA-Z]+");
+    }
+
+    // Imprime la matriz de Vigenère
+    static void imprimirMatrizVigenere() {
+        System.out.println("\n MATRIZ DE VIGENÈRE:\n");
+    
+        // Encabezado superior
+        System.out.print("    ");
+        for (int i = 0; i < ALFABETO; i++) {
+            System.out.print((char) ('A' + i) + " ");
+        }
+        System.out.println();
+    
+        // Línea separadora
+        System.out.print("    ");
+        for (int i = 0; i < ALFABETO; i++) {
+            System.out.print("--");
+        }
+        System.out.println();
+    
+        // Filas con encabezado lateral
+        for (int i = 0; i < ALFABETO; i++) {
+            System.out.print((char) ('A' + i) + " | ");
+            for (int j = 0; j < ALFABETO; j++) {
+                char letra = (char) ((i + j) % ALFABETO + 'A');
+                System.out.print(letra + " ");
+            }
+            System.out.println();
+        }
+    }    
 
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
+        String mensaje;
 
-        System.out.println("Ingrese el mensaje que desea cifar, escribir sin espacios : ");
-        String mensaje = scanner.nextLine();
-        String Keyword = "CLAVE";
-        String str = LowerToUpper(mensaje);
-        String keyword = LowerToUpper(Keyword);
+        while (true) {
+            System.out.print("Ingrese el mensaje que desea cifrar (solo letras, sin espacios): ");
+            mensaje = scanner.nextLine().trim();
 
-        String key = generarKey(str, keyword);
-        String cifrado = textCifrado(str, key);
+            if (mensaje.isEmpty()) {
+                System.out.println("Error: el mensaje está vacío. Intente de nuevo.\n");
+                continue;
+            }
 
-        System.out.println("Mensaje : " + textOriginal(cifrado, key));
-        System.out.println("Palabra Clave : " + Keyword);
-        System.out.println("Texto Cifrado : " + cifrado);
+            if (!mensajeValido(mensaje)) {
+                System.out.println("Error: el mensaje debe contener solo letras sin espacios ni símbolos ni números. Intente de nuevo.\n");
+                continue;
+            }
 
+            break; // mensaje válido
+        }
+
+        String claveFija = "CLAVE";
+        String mensajeMayus = lowerToUpper(mensaje);
+        String claveMayus = lowerToUpper(claveFija);
+
+        String key = generarKey(mensajeMayus, claveMayus);
+        String cifrado = textCifrado(mensajeMayus, key);
+        String descifrado = textOriginal(cifrado, key);
+
+        System.out.println("\n🔐 Resultados:");
+        System.out.println("Mensaje Original : " + mensajeMayus);
+        System.out.println("Palabra Clave    : " + claveFija);
+        System.out.println("Clave Generada   : " + key);
+        System.out.println("Texto Cifrado    : " + cifrado);
+        System.out.println("Texto Descifrado : " + descifrado);
+
+        imprimirMatrizVigenere();
+        scanner.close();
     }
 }
